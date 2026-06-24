@@ -12,7 +12,8 @@ export default {
     dragDrop: 'Drag and drop images here',
     or: 'or',
     browse: 'Browse Files',
-    supportedFormats: 'Supported: JPG, PNG, WebP'
+    supportedFormats: 'Supported: JPG, PNG, WebP',
+    addMore: 'Add More Images'
   },
   settings: {
     title: 'Watermark Settings',

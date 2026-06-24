@@ -43,17 +43,18 @@
             <h2 class="hero-title">{{ t('app.subtitle') }}</h2>
           </div>
 
-          <!-- Upload Section -->
-          <section class="section fade-in fade-in-delay-2">
+          <!-- Upload Section (Only show when no images) -->
+          <section v-if="images.length === 0" class="section fade-in fade-in-delay-2">
             <FileUpload @upload="handleUpload" />
           </section>
 
-          <!-- Images Grid -->
+          <!-- Images Grid with inline upload -->
           <section v-if="images.length > 0" class="section fade-in fade-in-delay-3">
             <ImageGrid
               :images="images"
               @download="downloadImage"
               @remove="removeImage"
+              @upload="handleUpload"
             />
           </section>
 

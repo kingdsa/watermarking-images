@@ -1,5 +1,6 @@
 <template>
   <div class="image-grid">
+    <!-- 现有图片卡片 -->
     <div v-for="image in images" :key="image.id" class="image-card">
       <div class="image-preview-wrapper">
         <img
@@ -51,10 +52,36 @@
         </button>
       </div>
     </div>
+
+    <!-- 上传卡片 -->
+    <div
+      class="upload-card"
+      :class="{ dragover: isDragging }"
+      @dragover.prevent="handleDragOver"
+      @dragleave.prevent="handleDragLeave"
+      @drop.prevent="handleDrop"
+      @click="triggerFileInput"
+    >
+      <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      <p class="upload-text">{{ t('upload.addMore') }}</p>
+      <input
+        ref="fileInput"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        style="display: none"
+        @change="handleFileSelect"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import type { WatermarkImage } from '../types'
 
@@ -62,17 +89,52 @@ defineProps<{
   images: WatermarkImage[]
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   download: [image: WatermarkImage]
   remove: [id: string]
+  upload: [files: File[]]
 }>()
 
 const { t } = useI18n()
+
+const isDragging = ref(false)
+const fileInput = ref<HTMLInputElement>()
 
 const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return bytes + ' B'
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+}
+
+const handleDragOver = () => {
+  isDragging.value = true
+}
+
+const handleDragLeave = () => {
+  isDragging.value = false
+}
+
+const handleDrop = (e: DragEvent) => {
+  isDragging.value = false
+  const files = Array.from(e.dataTransfer?.files || []).filter((file) =>
+    file.type.startsWith('image/')
+  )
+  if (files.length > 0) {
+    emit('upload', files)
+  }
+}
+
+const handleFileSelect = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const files = Array.from(target.files || [])
+  if (files.length > 0) {
+    emit('upload', files)
+  }
+  target.value = ''
+}
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
 }
 </script>
 
@@ -242,6 +304,45 @@ const formatFileSize = (bytes: number): string => {
   color: var(--color-error);
 }
 
+/* 上传卡片样式 */
+.upload-card {
+  background: var(--color-surface);
+  border: 2px dashed var(--color-border);
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: fadeIn 0.4s var(--ease-out) forwards;
+  min-height: 200px;
+}
+
+.upload-card:hover {
+  border-color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.03);
+}
+
+.upload-card.dragover {
+  border-color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.05);
+  transform: scale(1.02);
+}
+
+.upload-icon {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.upload-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -264,6 +365,16 @@ const formatFileSize = (bytes: number): string => {
 
   .btn-secondary {
     width: 100%;
+  }
+
+  .upload-card {
+    min-height: 160px;
+    padding: 1.5rem;
+  }
+
+  .upload-icon {
+    width: 40px;
+    height: 40px;
   }
 }
 </style>

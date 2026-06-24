@@ -12,7 +12,8 @@ export default {
     dragDrop: '拖拽图片到这里',
     or: '或者',
     browse: '浏览文件',
-    supportedFormats: '支持格式：JPG、PNG、WebP'
+    supportedFormats: '支持格式：JPG、PNG、WebP',
+    addMore: '添加更多图片'
   },
   settings: {
     title: '水印设置',
