@@ -13,6 +13,7 @@ A local image watermarking tool with batch processing, ensuring privacy and secu
 - 🌍 **国际化 | i18n**: 支持中文/英文双语切换
 - 📱 **响应式 | Responsive**: 完美适配桌面端和移动端
 - 💾 **批量下载 | Batch Download**: 支持打包下载所有已处理的图片（ZIP格式）
+- 👥 **实时在线人数 | Real-time Online Users**: 基于 Firebase 的跨设备实时在线统计
 
 ## 🚀 Quick Start | 快速开始
 
@@ -21,6 +22,31 @@ A local image watermarking tool with batch processing, ensuring privacy and secu
 ```bash
 npm install
 ```
+
+### Firebase Configuration | Firebase 配置
+
+本项目使用 Firebase Realtime Database 实现实时在线人数统计功能。
+
+1. 复制环境变量模板文件：
+```bash
+cp .env.example .env
+```
+
+2. 在 [Firebase Console](https://console.firebase.google.com/) 创建项目并获取配置信息
+
+3. 将配置信息填入 `.env` 文件：
+```env
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_DATABASE_URL=https://your_project.firebaseio.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+4. 在 Firebase Console 启用 Realtime Database（选择测试模式即可）
 
 ### Development | 开发模式
 
@@ -49,6 +75,7 @@ npm run preview
 - **Vite** - 快速构建工具
 - **Canvas API** - 图片处理
 - **JSZip** - ZIP 文件生成
+- **Firebase** - 实时数据库（在线人数统计）
 
 ## 📖 Usage | 使用说明
 
