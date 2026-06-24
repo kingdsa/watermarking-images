@@ -11,6 +11,14 @@
           <div class="spinner"></div>
           <span class="processing-text">{{ t('status.processing') }}</span>
         </div>
+        <div v-else-if="image.error" class="error-overlay">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span class="error-text">{{ image.error }}</span>
+        </div>
       </div>
 
       <div class="image-info">
@@ -115,6 +123,30 @@ const formatFileSize = (bytes: number): string => {
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+}
+
+.error-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--color-error-rgb), 0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.error-overlay svg {
+  color: var(--color-error);
+}
+
+.error-text {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  font-weight: 500;
+  text-align: center;
 }
 
 .spinner {

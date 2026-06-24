@@ -111,6 +111,8 @@ const hasProcessedImages = computed(() =>
 
 // 防抖定时器
 let debounceTimer: number | null = null
+// 处理中标志，防止重复处理
+let isProcessing = false
 
 // 监听设置变化，带防抖的自动更新所有图片预览
 watch(
@@ -123,7 +125,9 @@ watch(
       }
       // 设置新的定时器，500ms 后执行
       debounceTimer = window.setTimeout(async () => {
-        await processAllImages()
+        if (!isProcessing) {
+          await processAllImages()
+        }
         debounceTimer = null
       }, 500)
     }
@@ -137,7 +141,8 @@ const handleUpload = async (files: File[]) => {
     file,
     originalUrl: URL.createObjectURL(file),
     watermarkedUrl: null,
-    processing: false
+    processing: false,
+    error: undefined
   }))
   images.value.push(...newImages)
 
@@ -150,29 +155,50 @@ const handleUpload = async (files: File[]) => {
 }
 
 const processAllImages = async () => {
-  if (!settings.value.text.trim()) {
+  if (!settings.value.text.trim() || isProcessing) {
     return
   }
 
-  for (const image of images.value) {
-    await processSingleImage(image)
+  isProcessing = true
+  try {
+    for (const image of images.value) {
+      await processSingleImage(image)
+    }
+  } finally {
+    isProcessing = false
   }
 }
 
 const processSingleImage = async (image: WatermarkImage) => {
-  image.processing = true
   try {
+    // 使用 Vue 的响应式方式更新状态
+    const index = images.value.findIndex(img => img.id === image.id)
+    if (index === -1) return
+
+    images.value[index].processing = true
+    images.value[index].error = undefined
+
     // 如果之前有水印URL，先释放它
     if (image.watermarkedUrl) {
       URL.revokeObjectURL(image.watermarkedUrl)
-      image.watermarkedUrl = null
     }
+
     const watermarkedUrl = await processImage(image, settings.value)
-    image.watermarkedUrl = watermarkedUrl
+
+    // 确保图片还在列表中（用户可能已经删除）
+    const currentIndex = images.value.findIndex(img => img.id === image.id)
+    if (currentIndex !== -1) {
+      images.value[currentIndex].watermarkedUrl = watermarkedUrl
+      images.value[currentIndex].processing = false
+      images.value[currentIndex].error = undefined
+    }
   } catch (error) {
     console.error('Failed to process image:', error)
-  } finally {
-    image.processing = false
+    const index = images.value.findIndex(img => img.id === image.id)
+    if (index !== -1) {
+      images.value[index].processing = false
+      images.value[index].error = error instanceof Error ? error.message : t('status.error')
+    }
   }
 }
 

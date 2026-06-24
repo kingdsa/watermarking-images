@@ -4,7 +4,7 @@ export function applyWatermark(
   image: HTMLImageElement,
   settings: WatermarkSettings
 ): Promise<string> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')!
 
@@ -103,6 +103,8 @@ export function applyWatermark(
     canvas.toBlob((blob) => {
       if (blob) {
         resolve(URL.createObjectURL(blob))
+      } else {
+        reject(new Error('Failed to create blob from canvas'))
       }
     }, 'image/png')
   })
@@ -113,16 +115,26 @@ export function processImage(
   settings: WatermarkSettings
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    // 设置超时，防止永久卡住
+    const timeout = setTimeout(() => {
+      reject(new Error('Image processing timeout'))
+    }, 30000) // 30秒超时
+
     const img = new Image()
     img.onload = async () => {
       try {
         const watermarkedUrl = await applyWatermark(img, settings)
+        clearTimeout(timeout)
         resolve(watermarkedUrl)
       } catch (error) {
+        clearTimeout(timeout)
         reject(error)
       }
     }
-    img.onerror = reject
+    img.onerror = () => {
+      clearTimeout(timeout)
+      reject(new Error('Failed to load image'))
+    }
     img.src = imageFile.originalUrl
   })
 }

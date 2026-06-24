@@ -41,6 +41,8 @@ export default {
   status: {
     processing: 'Processing...',
     ready: 'Ready',
-    noImages: 'No images uploaded yet'
+    noImages: 'No images uploaded yet',
+    error: 'Processing failed',
+    timeout: 'Processing timeout, please retry'
   }
 }

@@ -41,6 +41,8 @@ export default {
   status: {
     processing: '处理中...',
     ready: '就绪',
-    noImages: '还没有上传图片'
+    noImages: '还没有上传图片',
+    error: '处理失败',
+    timeout: '处理超时，请重试'
   }
 }

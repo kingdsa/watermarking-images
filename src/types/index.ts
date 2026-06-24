@@ -4,6 +4,7 @@ export interface WatermarkImage {
   originalUrl: string
   watermarkedUrl: string | null
   processing: boolean
+  error?: string
 }
 
 export interface WatermarkSettings {
