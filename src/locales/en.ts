@@ -5,7 +5,8 @@ export default {
   },
   header: {
     darkMode: 'Dark Mode',
-    language: 'Language'
+    language: 'Language',
+    onlineUsers: 'Online'
   },
   upload: {
     title: 'Upload Images',

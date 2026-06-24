@@ -6,6 +6,16 @@
       </div>
 
       <div class="header-controls">
+        <!-- Online Users Counter -->
+        <div class="online-counter">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span class="online-count">{{ onlineCount }}</span>
+          <span class="online-label">{{ t('header.onlineUsers') }}</span>
+        </div>
+
         <!-- Language Switcher -->
         <div class="control-group">
           <label class="control-label">{{ t('header.language') }}</label>
@@ -52,10 +62,12 @@
 <script setup lang="ts">
 import { useI18n } from '../composables/useI18n'
 import { useTheme } from '../composables/useTheme'
+import { useOnlineUsers } from '../composables/useOnlineUsers'
 import type { Locale } from '../types'
 
 const { t, locale, setLocale } = useI18n()
 const { theme, toggleTheme } = useTheme()
+const { onlineCount } = useOnlineUsers()
 
 const handleLocaleChange = (e: Event) => {
   const target = e.target as HTMLSelectElement
@@ -205,6 +217,45 @@ const handleLocaleChange = (e: Event) => {
   box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2);
 }
 
+.online-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+}
+
+.online-counter svg {
+  color: #22c55e;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.online-count {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.online-label {
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
 @media (max-width: 639px) {
   .header-content {
     flex-direction: column;
@@ -214,10 +265,18 @@ const handleLocaleChange = (e: Event) => {
   .header-controls {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 
   .control-label {
     display: none;
+  }
+
+  .online-counter {
+    order: -1;
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

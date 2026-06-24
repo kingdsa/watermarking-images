@@ -5,7 +5,8 @@ export default {
   },
   header: {
     darkMode: '暗黑模式',
-    language: '语言'
+    language: '语言',
+    onlineUsers: '在线'
   },
   upload: {
     title: '上传图片',
