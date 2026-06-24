@@ -6,8 +6,6 @@
       <!-- Left Sidebar: Watermark Settings -->
       <aside class="sidebar fade-in">
         <div class="sidebar-content">
-          <h2 class="sidebar-title">{{ t('settings.title') }}</h2>
-
           <WatermarkSettings v-model="settings" />
 
           <!-- Actions -->
@@ -36,7 +34,7 @@
       </aside>
 
       <!-- Right Content: Upload and Preview -->
-      <div class="content-area">
+      <div class="content-area" :class="{ 'no-scroll': images.length === 0 }">
         <div class="content-inner">
           <!-- Hero -->
           <div class="hero fade-in fade-in-delay-1">
@@ -292,12 +290,28 @@ const clearAll = () => {
 .content-area {
   flex: 1;
   overflow-y: auto;
+  min-height: 0; /* 修复 flex 子元素的滚动问题 */
+}
+
+.content-area.no-scroll {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-inner {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 2rem;
+  width: 100%;
+}
+
+.no-scroll .content-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .hero {
