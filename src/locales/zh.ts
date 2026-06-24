@@ -32,8 +32,8 @@ export default {
     'center': '居中'
   },
   actions: {
-    processAll: '批量处理',
     downloadAll: '打包下载',
+    downloadAllProcessing: '处理中，请稍候...',
     download: '下载',
     remove: '移除',
     clear: '清空全部'

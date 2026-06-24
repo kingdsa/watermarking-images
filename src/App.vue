@@ -14,17 +14,7 @@
           <div class="sidebar-actions">
             <button
               class="btn-primary btn-full"
-              @click="processAllImages"
-              :disabled="images.length === 0"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              {{ t('actions.processAll') }}
-            </button>
-            <button
-              class="btn-primary btn-full"
-              :disabled="!hasProcessedImages"
+              :disabled="!canDownloadAll"
               @click="downloadAllAsZip"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -32,7 +22,7 @@
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              {{ t('actions.downloadAll') }}
+              {{ hasProcessingImages ? t('actions.downloadAllProcessing') : t('actions.downloadAll') }}
             </button>
             <button
               class="btn-secondary btn-full"
@@ -109,6 +99,14 @@ const hasProcessedImages = computed(() =>
   images.value.some((img) => img.watermarkedUrl !== null)
 )
 
+const hasProcessingImages = computed(() =>
+  images.value.some((img) => img.processing)
+)
+
+const canDownloadAll = computed(() =>
+  hasProcessedImages.value && !hasProcessingImages.value
+)
+
 // 防抖定时器
 let debounceTimer: number | null = null
 // 处理中标志，防止重复处理
@@ -146,11 +144,11 @@ const handleUpload = async (files: File[]) => {
   }))
   images.value.push(...newImages)
 
-  // 如果有水印文本，自动处理新上传的图片
+  // 如果有水印文本，自动处理新上传的图片（并行）
   if (settings.value.text.trim()) {
-    for (const image of newImages) {
-      await processSingleImage(image)
-    }
+    await Promise.all(
+      newImages.map(image => processSingleImage(image))
+    )
   }
 }
 
@@ -161,9 +159,10 @@ const processAllImages = async () => {
 
   isProcessing = true
   try {
-    for (const image of images.value) {
-      await processSingleImage(image)
-    }
+    // 并行处理所有图片，而不是串行
+    await Promise.all(
+      images.value.map(image => processSingleImage(image))
+    )
   } finally {
     isProcessing = false
   }

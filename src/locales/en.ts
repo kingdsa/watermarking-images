@@ -32,8 +32,8 @@ export default {
     'center': 'Center'
   },
   actions: {
-    processAll: 'Process All Images',
     downloadAll: 'Download All as ZIP',
+    downloadAllProcessing: 'Processing, please wait...',
     download: 'Download',
     remove: 'Remove',
     clear: 'Clear All'
