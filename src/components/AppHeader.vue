@@ -52,6 +52,11 @@ const handleLocaleChange = (e: Event) => {
 
 <style scoped>
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   padding: 1rem 0;
