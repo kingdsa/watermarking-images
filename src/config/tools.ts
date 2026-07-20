@@ -5,6 +5,7 @@ import expandIcon from '@iconify-icons/lucide/expand'
 import scalingIcon from '@iconify-icons/lucide/scaling'
 import arrowRightLeftIcon from '@iconify-icons/lucide/arrow-right-left'
 import paletteIcon from '@iconify-icons/lucide/palette'
+import layoutTemplateIcon from '@iconify-icons/lucide/layout-template'
 
 export interface ToolMeta {
   id: string
@@ -59,6 +60,14 @@ export const tools: ToolMeta[] = [
     to: '/tools/ui-color',
     icon: 'uiColor',
     available: true
+  },
+  {
+    id: 'ui-templates',
+    nameKey: 'tools.uiTemplates.name',
+    descriptionKey: 'tools.uiTemplates.description',
+    to: '/tools/ui-templates',
+    icon: 'uiTemplates',
+    available: true
   }
 ]
 
@@ -67,5 +76,6 @@ export const toolIcons: Record<string, IconifyIcon> = {
   compress: expandIcon,
   resize: scalingIcon,
   convert: arrowRightLeftIcon,
-  uiColor: paletteIcon
+  uiColor: paletteIcon,
+  uiTemplates: layoutTemplateIcon
 }

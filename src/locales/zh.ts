@@ -36,6 +36,10 @@ export default {
     uiColor: {
       name: 'UI 配色',
       description: '生成、预览并导出适用于设计系统的 UI 配色方案。'
+    },
+    uiTemplates: {
+      name: '常用 UI 模版',
+      description: '常用 UI 模版集合，可预览并复用。'
     }
   },
   header: {

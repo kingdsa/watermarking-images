@@ -21,6 +21,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'uiColor' }
   },
   {
+    path: '/tools/ui-templates',
+    name: 'ui-templates',
+    component: () => import('../views/UITemplatesView.vue'),
+    meta: { title: 'uiTemplates' }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('../views/NotFoundView.vue'),

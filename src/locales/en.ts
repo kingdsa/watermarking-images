@@ -36,6 +36,10 @@ export default {
     uiColor: {
       name: 'UI Color Scheme',
       description: 'Generate, preview and export UI color palettes for your design system.'
+    },
+    uiTemplates: {
+      name: 'UI Templates',
+      description: 'A collection of common UI templates to preview and reuse.'
     }
   },
   header: {
