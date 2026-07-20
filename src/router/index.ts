@@ -15,6 +15,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'imageWatermark' }
   },
   {
+    path: '/tools/ui-color',
+    name: 'ui-color',
+    component: () => import('../views/UIColorToolView.vue'),
+    meta: { title: 'uiColor' }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('../views/NotFoundView.vue'),

@@ -4,6 +4,7 @@ import stampIcon from '@iconify-icons/lucide/stamp'
 import expandIcon from '@iconify-icons/lucide/expand'
 import scalingIcon from '@iconify-icons/lucide/scaling'
 import arrowRightLeftIcon from '@iconify-icons/lucide/arrow-right-left'
+import paletteIcon from '@iconify-icons/lucide/palette'
 
 export interface ToolMeta {
   id: string
@@ -50,6 +51,14 @@ export const tools: ToolMeta[] = [
     icon: 'convert',
     available: false,
     badgeKey: 'tools.comingSoon'
+  },
+  {
+    id: 'ui-color',
+    nameKey: 'tools.uiColor.name',
+    descriptionKey: 'tools.uiColor.description',
+    to: '/tools/ui-color',
+    icon: 'uiColor',
+    available: true
   }
 ]
 
@@ -57,5 +66,6 @@ export const toolIcons: Record<string, IconifyIcon> = {
   watermark: stampIcon,
   compress: expandIcon,
   resize: scalingIcon,
-  convert: arrowRightLeftIcon
+  convert: arrowRightLeftIcon,
+  uiColor: paletteIcon
 }

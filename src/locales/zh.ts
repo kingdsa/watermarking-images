@@ -32,6 +32,10 @@ export default {
     imageConvert: {
       name: '图片转换',
       description: '在 JPG、PNG、WebP 等格式之间本地快速转换。'
+    },
+    uiColor: {
+      name: 'UI 配色',
+      description: '生成、预览并导出适用于设计系统的 UI 配色方案。'
     }
   },
   header: {
@@ -84,5 +88,8 @@ export default {
   notFound: {
     message: '您访问的页面不存在。',
     backHome: '返回首页'
+  },
+  uiColor: {
+    placeholder: '敬请期待'
   }
 }

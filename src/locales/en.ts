@@ -32,6 +32,10 @@ export default {
     imageConvert: {
       name: 'Image Convert',
       description: 'Convert between JPG, PNG, WebP and other formats locally and quickly.'
+    },
+    uiColor: {
+      name: 'UI Color Scheme',
+      description: 'Generate, preview and export UI color palettes for your design system.'
     }
   },
   header: {
@@ -84,5 +88,8 @@ export default {
   notFound: {
     message: 'The page you are looking for does not exist.',
     backHome: 'Back to Home'
+  },
+  uiColor: {
+    placeholder: 'Coming soon'
   }
 }

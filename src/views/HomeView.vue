@@ -13,7 +13,7 @@
       <div class="tools-grid">
         <component
           :is="tool.available ? 'router-link' : 'div'"
-          v-for="(tool, index) in tools"
+          v-for="(tool, index) in sortedTools"
           :key="tool.id"
           :to="tool.available ? tool.to : undefined"
           class="tool-card fade-in"
@@ -49,12 +49,17 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Icon } from '@iconify/vue'
 import arrowRightIcon from '@iconify-icons/lucide/arrow-right'
 import { useI18n } from '../composables/useI18n'
 import { tools, toolIcons } from '../config/tools'
 
 const { t } = useI18n()
+
+const sortedTools = computed(() =>
+  [...tools].sort((a, b) => Number(b.available) - Number(a.available))
+)
 </script>
 
 <style scoped>
