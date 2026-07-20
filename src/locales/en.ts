@@ -90,6 +90,44 @@ export default {
     backHome: 'Back to Home'
   },
   uiColor: {
-    placeholder: 'Coming soon'
+    placeholder: 'Coming soon',
+    sectionMobile: 'Mobile',
+    sectionPC: 'Desktop',
+    schemeTags: {
+      primary: 'Primary',
+      secondary: 'Secondary',
+      accent: 'Accent',
+      background: 'Background',
+      surface: 'Surface'
+    },
+    copyHint: 'Click swatch to copy hex',
+    copied: 'Copied',
+    schemes: {
+      minimalPro: {
+        name: 'Minimal Pro',
+        summary: 'Monochrome slate with a muted blue accent — quiet, capable, trustworthy.',
+        description: 'A restrained palette built on warm neutrals and a single slate-blue accent. Ideal for professional tools, enterprise SaaS, and dashboards where content must lead and chrome must recede.'
+      },
+      oceanTech: {
+        name: 'Ocean Tech',
+        summary: 'Bright sky-blue primary with cyan highlights — fresh, technical, optimistic.',
+        description: 'A vibrant blue system that reads as modern and data-driven. Pairs well with analytics, fintech, and developer-facing products. Use cyan sparingly to mark interactive states.'
+      },
+      vibrantWarmth: {
+        name: 'Vibrant Warmth',
+        summary: 'Energetic orange anchored by amber and red — warm, social, inviting.',
+        description: 'A warm palette that feels approachable and energetic. Suited to creative tools, social apps, and commerce. Balance saturated accents with generous whitespace to avoid visual fatigue.'
+      },
+      forestNature: {
+        name: 'Forest Nature',
+        summary: 'Verdant greens with a lime secondary — calm, organic, balanced.',
+        description: 'A green-led palette evoking growth, health, and sustainability. Works for wellness, finance-saving, and lifestyle products. Keep contrast high on text to preserve readability.'
+      },
+      purpleDream: {
+        name: 'Purple Dream',
+        summary: 'Violet primary with pink and lilac accents — imaginative, premium, bold.',
+        description: 'A expressive purple system for creative, design, and AI products. Pink and lilac accents add personality without overwhelming. Reserve dark violet for primary actions only.'
+      }
+    }
   }
 }

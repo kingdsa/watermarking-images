@@ -90,6 +90,44 @@ export default {
     backHome: '返回首页'
   },
   uiColor: {
-    placeholder: '敬请期待'
+    placeholder: '敬请期待',
+    sectionMobile: '移动端',
+    sectionPC: 'PC 端',
+    schemeTags: {
+      primary: '主色调',
+      secondary: '副色调',
+      accent: '强调色',
+      background: '背景色',
+      surface: '表面色'
+    },
+    copyHint: '点击色块复制色值',
+    copied: '已复制',
+    schemes: {
+      minimalPro: {
+        name: '极简专业',
+        summary: '中性灰阶搭配低饱和石板蓝点缀，沉静、克制、可信。',
+        description: '以暖中性色为基底、单一石板蓝为强调色的克制配色。适合专业工具、企业级 SaaS、数据看板等以内容为主、界面需退让的场景。'
+      },
+      oceanTech: {
+        name: '海洋科技',
+        summary: '明亮天蓝主色辅以青蓝高光，清新、技术感、积极向上。',
+        description: '现代数据感十足的蓝色系配色，适合分析、金融科技、开发者工具。青蓝仅用于交互态以保持节奏感，避免过载。'
+      },
+      vibrantWarmth: {
+        name: '暖橙活力',
+        summary: '活力橙红搭配琥珀与红色，温暖、社交、亲和。',
+        description: '暖色系配色带来亲和与活力，适合创意工具、社交应用、电商场景。饱和色需配合大量留白，避免视觉疲劳。'
+      },
+      forestNature: {
+        name: '森林自然',
+        summary: '翠绿主色搭配黄绿副色，平静、有机、平衡。',
+        description: '绿色系配色象征生长、健康与可持续，适合健康、理财储蓄、生活方式类产品。注意保持文字对比度，确保可读性。'
+      },
+      purpleDream: {
+        name: '紫红梦幻',
+        summary: '紫色主色搭配粉色与浅紫强调，想象力、高级、大胆。',
+        description: '表现力强的紫色系配色，适合创意、设计、AI 类产品。粉色与浅紫增添个性但不喧宾夺主，深紫仅用于主要操作。'
+      }
+    }
   }
 }
