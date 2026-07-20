@@ -13,11 +13,7 @@
           <span class="processing-text">{{ t('status.processing') }}</span>
         </div>
         <div v-else-if="image.error" class="error-overlay">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
+          <Icon :icon="alertCircleIcon" :width="32" :height="32" />
           <span class="error-text">{{ image.error }}</span>
         </div>
       </div>
@@ -33,21 +29,14 @@
           :disabled="!image.watermarkedUrl || image.processing"
           @click="$emit('download', image)"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
+          <Icon :icon="downloadIcon" :width="16" :height="16" />
           {{ t('actions.download') }}
         </button>
         <button
           class="btn-secondary btn-small btn-danger"
           @click="$emit('remove', image.id)"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          </svg>
+          <Icon :icon="trashIcon" :width="16" :height="16" />
           {{ t('actions.remove') }}
         </button>
       </div>
@@ -62,11 +51,7 @@
       @drop.prevent="handleDrop"
       @click="triggerFileInput"
     >
-      <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="17 8 12 3 7 8"></polyline>
-        <line x1="12" y1="3" x2="12" y2="15"></line>
-      </svg>
+      <Icon class="upload-icon" :icon="uploadIcon" :width="48" :height="48" />
       <p class="upload-text">{{ t('upload.addMore') }}</p>
       <input
         ref="fileInput"
@@ -82,6 +67,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Icon } from '@iconify/vue'
+import alertCircleIcon from '@iconify-icons/lucide/alert-circle'
+import downloadIcon from '@iconify-icons/lucide/download'
+import trashIcon from '@iconify-icons/lucide/trash-2'
+import uploadIcon from '@iconify-icons/lucide/upload'
 import { useI18n } from '../composables/useI18n'
 import type { WatermarkImage } from '../types'
 

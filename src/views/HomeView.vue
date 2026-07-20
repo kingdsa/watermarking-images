@@ -21,7 +21,9 @@
           :style="{ animationDelay: `${0.1 + index * 0.08}s` }"
         >
           <div class="tool-card-header">
-            <div class="tool-icon" v-html="toolIcons[tool.icon]"></div>
+            <div class="tool-icon">
+              <Icon :icon="toolIcons[tool.icon]" />
+            </div>
             <span v-if="tool.badgeKey" class="tool-badge">{{ t(tool.badgeKey) }}</span>
           </div>
 
@@ -34,20 +36,7 @@
             <span class="tool-action">
               {{ tool.available ? t('home.enter') : t('home.stayTuned') }}
             </span>
-            <svg
-              class="tool-arrow"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
+            <Icon class="tool-arrow" :icon="arrowRightIcon" :width="18" :height="18" />
           </div>
         </component>
       </div>
@@ -60,6 +49,8 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
+import arrowRightIcon from '@iconify-icons/lucide/arrow-right'
 import { useI18n } from '../composables/useI18n'
 import { tools, toolIcons } from '../config/tools'
 

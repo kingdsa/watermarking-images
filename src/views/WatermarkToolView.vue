@@ -12,11 +12,7 @@
             :disabled="!canDownloadAll"
             @click="downloadAllAsZip"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
+            <Icon :icon="downloadIcon" :width="20" :height="20" />
             {{ hasProcessingImages ? t('actions.downloadAllProcessing') : t('actions.downloadAll') }}
           </button>
           <button
@@ -36,10 +32,7 @@
         <!-- Hero -->
         <div class="hero fade-in fade-in-delay-1">
           <button class="back-link" @click="goHome">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
+            <Icon :icon="arrowLeftIcon" :width="16" :height="16" />
             {{ t('tools.backToTools') }}
           </button>
           <h2 class="hero-title">{{ t('tools.imageWatermark.name') }}</h2>
@@ -63,11 +56,7 @@
 
         <!-- Empty State -->
         <section v-if="images.length === 0" class="empty-state fade-in fade-in-delay-3">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <polyline points="21 15 16 10 5 21"></polyline>
-          </svg>
+          <Icon :icon="imageIcon" :width="64" :height="64" />
           <p class="empty-text">{{ t('status.noImages') }}</p>
         </section>
       </div>
@@ -78,6 +67,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { Icon } from '@iconify/vue'
+import downloadIcon from '@iconify-icons/lucide/download'
+import arrowLeftIcon from '@iconify-icons/lucide/arrow-left'
+import imageIcon from '@iconify-icons/lucide/image'
 import JSZip from 'jszip'
 import FileUpload from '../components/FileUpload.vue'
 import WatermarkSettings from '../components/WatermarkSettings.vue'
