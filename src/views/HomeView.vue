@@ -1,437 +1,310 @@
 <template>
-  <div id="app">
-    <AppHeader />
-
-    <main class="main-content">
-      <!-- Left Sidebar: Watermark Settings -->
-      <aside class="sidebar fade-in">
-        <div class="sidebar-content">
-          <WatermarkSettings v-model="settings" />
-
-          <!-- Actions -->
-          <div class="sidebar-actions">
-            <button
-              class="btn-primary btn-full"
-              :disabled="!canDownloadAll"
-              @click="downloadAllAsZip"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              {{ hasProcessingImages ? t('actions.downloadAllProcessing') : t('actions.downloadAll') }}
-            </button>
-            <button
-              class="btn-secondary btn-full"
-              @click="clearAll"
-              :disabled="images.length === 0"
-            >
-              {{ t('actions.clear') }}
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Right Content: Upload and Preview -->
-      <div class="content-area" :class="{ 'no-scroll': images.length === 0 }">
-        <div class="content-inner">
-          <!-- Hero -->
-          <div class="hero fade-in fade-in-delay-1">
-            <h2 class="hero-title">{{ t('app.subtitle') }}</h2>
-          </div>
-
-          <!-- Upload Section (Only show when no images) -->
-          <section v-if="images.length === 0" class="section fade-in fade-in-delay-2">
-            <FileUpload @upload="handleUpload" />
-          </section>
-
-          <!-- Images Grid with inline upload -->
-          <section v-if="images.length > 0" class="section fade-in fade-in-delay-3">
-            <ImageGrid
-              :images="images"
-              @download="downloadImage"
-              @remove="removeImage"
-              @upload="handleUpload"
-            />
-          </section>
-
-          <!-- Empty State -->
-          <section v-if="images.length === 0" class="empty-state fade-in fade-in-delay-3">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
-            <p class="empty-text">{{ t('status.noImages') }}</p>
-          </section>
-        </div>
+  <div class="home-page fade-in">
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        <span>{{ t('home.eyebrow') }}</span>
       </div>
-    </main>
+      <h1 class="hero-title">{{ t('home.title') }}</h1>
+      <p class="hero-subtitle">{{ t('home.subtitle') }}</p>
+    </section>
+
+    <section class="tools-section">
+      <div class="tools-grid">
+        <component
+          :is="tool.available ? 'router-link' : 'div'"
+          v-for="(tool, index) in tools"
+          :key="tool.id"
+          :to="tool.available ? tool.to : undefined"
+          class="tool-card fade-in"
+          :class="{ 'is-disabled': !tool.available }"
+          :style="{ animationDelay: `${0.1 + index * 0.08}s` }"
+        >
+          <div class="tool-card-header">
+            <div class="tool-icon" v-html="toolIcons[tool.icon]"></div>
+            <span v-if="tool.badgeKey" class="tool-badge">{{ t(tool.badgeKey) }}</span>
+          </div>
+
+          <div class="tool-card-body">
+            <h2 class="tool-name">{{ t(tool.nameKey) }}</h2>
+            <p class="tool-desc">{{ t(tool.descriptionKey) }}</p>
+          </div>
+
+          <div class="tool-card-footer">
+            <span class="tool-action">
+              {{ tool.available ? t('home.enter') : t('home.stayTuned') }}
+            </span>
+            <svg
+              class="tool-arrow"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </div>
+        </component>
+      </div>
+    </section>
+
+    <footer class="home-footer">
+      <p>{{ t('home.footerHint') }}</p>
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import JSZip from 'jszip'
-import AppHeader from '../components/AppHeader.vue'
-import FileUpload from '../components/FileUpload.vue'
-import WatermarkSettings from '../components/WatermarkSettings.vue'
-import ImageGrid from '../components/ImageGrid.vue'
 import { useI18n } from '../composables/useI18n'
-import { processImage, downloadImage as download } from '../composables/useWatermark'
-import type { WatermarkImage, WatermarkSettings as WatermarkSettingsType } from '../types'
+import { tools, toolIcons } from '../config/tools'
 
 const { t } = useI18n()
-
-const images = ref<WatermarkImage[]>([])
-const settings = ref<WatermarkSettingsType>({
-  text: 'Watermark',
-  fontSize: 64,
-  opacity: 80,
-  color: '#ffffff',
-  position: 'bottom-right',
-  rotation: 0
-})
-
-const hasProcessedImages = computed(() =>
-  images.value.some((img) => img.watermarkedUrl !== null)
-)
-
-const hasProcessingImages = computed(() =>
-  images.value.some((img) => img.processing)
-)
-
-const canDownloadAll = computed(() =>
-  hasProcessedImages.value && !hasProcessingImages.value
-)
-
-// 防抖定时器
-let debounceTimer: number | null = null
-// 处理中标志，防止重复处理
-let isProcessing = false
-
-// 监听设置变化，带防抖的自动更新所有图片预览
-watch(
-  settings,
-  () => {
-    if (images.value.length > 0 && settings.value.text.trim()) {
-      // 清除之前的定时器
-      if (debounceTimer !== null) {
-        clearTimeout(debounceTimer)
-      }
-      // 设置新的定时器，500ms 后执行
-      debounceTimer = window.setTimeout(async () => {
-        if (!isProcessing) {
-          await processAllImages()
-        }
-        debounceTimer = null
-      }, 500)
-    }
-  },
-  { deep: true }
-)
-
-const handleUpload = async (files: File[]) => {
-  const newImages: WatermarkImage[] = files.map((file) => ({
-    id: crypto.randomUUID(),
-    file,
-    originalUrl: URL.createObjectURL(file),
-    watermarkedUrl: null,
-    processing: false,
-    error: undefined
-  }))
-  images.value.push(...newImages)
-
-  // 如果有水印文本，自动处理新上传的图片（并行）
-  if (settings.value.text.trim()) {
-    await Promise.all(
-      newImages.map(image => processSingleImage(image))
-    )
-  }
-}
-
-const processAllImages = async () => {
-  if (!settings.value.text.trim() || isProcessing) {
-    return
-  }
-
-  isProcessing = true
-  try {
-    // 并行处理所有图片，而不是串行
-    await Promise.all(
-      images.value.map(image => processSingleImage(image))
-    )
-  } finally {
-    isProcessing = false
-  }
-}
-
-const processSingleImage = async (image: WatermarkImage) => {
-  try {
-    // 使用 Vue 的响应式方式更新状态
-    const index = images.value.findIndex(img => img.id === image.id)
-    if (index === -1) return
-
-    images.value[index].processing = true
-    images.value[index].error = undefined
-
-    // 如果之前有水印URL，先释放它
-    if (image.watermarkedUrl) {
-      URL.revokeObjectURL(image.watermarkedUrl)
-    }
-
-    const watermarkedUrl = await processImage(image, settings.value)
-
-    // 确保图片还在列表中（用户可能已经删除）
-    const currentIndex = images.value.findIndex(img => img.id === image.id)
-    if (currentIndex !== -1) {
-      images.value[currentIndex].watermarkedUrl = watermarkedUrl
-      images.value[currentIndex].processing = false
-      images.value[currentIndex].error = undefined
-    }
-  } catch (error) {
-    console.error('Failed to process image:', error)
-    const index = images.value.findIndex(img => img.id === image.id)
-    if (index !== -1) {
-      images.value[index].processing = false
-      images.value[index].error = error instanceof Error ? error.message : t('status.error')
-    }
-  }
-}
-
-const downloadImage = (image: WatermarkImage) => {
-  if (image.watermarkedUrl) {
-    const filename = image.file.name.replace(/\.[^/.]+$/, '') + '_watermarked.png'
-    download(image.watermarkedUrl, filename)
-  }
-}
-
-const downloadAllAsZip = async () => {
-  const zip = new JSZip()
-  const processedImages = images.value.filter((img) => img.watermarkedUrl)
-
-  for (const image of processedImages) {
-    const response = await fetch(image.watermarkedUrl!)
-    const blob = await response.blob()
-    const filename = image.file.name.replace(/\.[^/.]+$/, '') + '_watermarked.png'
-    zip.file(filename, blob)
-  }
-
-  const content = await zip.generateAsync({ type: 'blob' })
-  const url = URL.createObjectURL(content)
-  download(url, 'watermarked_images.zip')
-  URL.revokeObjectURL(url)
-}
-
-const removeImage = (id: string) => {
-  const index = images.value.findIndex((img) => img.id === id)
-  if (index !== -1) {
-    const image = images.value[index]
-    URL.revokeObjectURL(image.originalUrl)
-    if (image.watermarkedUrl) {
-      URL.revokeObjectURL(image.watermarkedUrl)
-    }
-    images.value.splice(index, 1)
-  }
-}
-
-const clearAll = () => {
-  images.value.forEach((image) => {
-    URL.revokeObjectURL(image.originalUrl)
-    if (image.watermarkedUrl) {
-      URL.revokeObjectURL(image.watermarkedUrl)
-    }
-  })
-  images.value = []
-}
 </script>
 
 <style scoped>
-.main-content {
-  display: flex;
-  min-height: calc(100vh - 70px);
-  margin-top: 70px;
-  background: var(--color-background);
-}
-
-/* Left Sidebar */
-.sidebar {
-  width: 360px;
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
-  overflow-y: auto;
-  position: sticky;
-  top: 70px;
-  height: calc(100vh - 70px);
-}
-
-.sidebar-content {
-  padding: 2rem 1.5rem;
-}
-
-.sidebar-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 2rem;
-}
-
-.sidebar-actions {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--color-border);
-}
-
-/* Right Content Area */
-.content-area {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0; /* 修复 flex 子元素的滚动问题 */
-}
-
-.content-area.no-scroll {
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.content-inner {
-  max-width: 1400px;
+.home-page {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 2rem;
-  width: 100%;
+  padding: 4rem 1.5rem 3rem;
 }
 
-.no-scroll .content-inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-}
-
+/* Hero */
 .hero {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  background: rgba(var(--color-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.18);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  margin-bottom: 1.5rem;
+}
+
+.hero-eyebrow .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2);
 }
 
 .hero-title {
-  font-size: 1.25rem;
-  font-weight: 500;
+  font-size: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+  background: linear-gradient(
+    180deg,
+    var(--color-text-primary) 0%,
+    var(--color-text-secondary) 130%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.0625rem;
   color: var(--color-text-secondary);
-  line-height: 1.4;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.65;
 }
 
-.section {
-  margin-bottom: 2rem;
+/* Tools Grid */
+.tools-section {
+  margin-bottom: 3rem;
 }
 
-.btn-primary {
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  font-family: var(--font-sans);
-  color: #FFFFFF;
-  background: var(--color-accent);
-  border: none;
-  border-radius: 0.5rem;
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Tool Card */
+.tool-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.875rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out),
+              border-color 0.2s var(--ease-out);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-height: 220px;
+  overflow: hidden;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+}
+
+.tool-card:hover:not(.is-disabled) {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent);
+}
+
+.tool-card:hover:not(.is-disabled)::before {
+  opacity: 1;
+}
+
+.tool-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.tool-card.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.tool-card.is-disabled .tool-icon {
+  background: rgba(var(--color-border-rgb), 0.4);
+  color: var(--color-text-secondary);
+}
+
+.tool-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tool-icon {
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  background: rgba(var(--color-accent-rgb), 0.1);
+  color: var(--color-accent);
+  border-radius: 0.75rem;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: var(--color-accent-hover);
-  box-shadow: 0 4px 8px rgba(var(--color-accent-rgb), 0.2);
-  transform: translateY(-1px);
+.tool-icon :deep(svg) {
+  width: 26px;
+  height: 26px;
 }
 
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+.tool-card:hover:not(.is-disabled) .tool-icon {
+  background: var(--color-accent);
+  color: #ffffff;
 }
 
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
+.tool-badge {
+  flex-shrink: 0;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  background: rgba(var(--color-border-rgb), 0.6);
+  border-radius: 999px;
+  text-transform: uppercase;
 }
 
-.btn-full {
-  width: 100%;
+.tool-card-body {
+  flex: 1;
 }
 
-.btn-secondary {
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  font-family: var(--font-sans);
+.tool-name {
+  font-size: 1.125rem;
+  font-weight: 600;
   color: var(--color-text-primary);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
+  margin-bottom: 0.375rem;
+  letter-spacing: -0.01em;
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background: var(--color-background);
-  border-color: var(--color-text-secondary);
+.tool-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
-.btn-secondary:disabled {
+.tool-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.tool-action {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.01em;
+}
+
+.tool-card.is-disabled .tool-action {
+  color: var(--color-text-secondary);
+}
+
+.tool-arrow {
+  color: var(--color-accent);
+  transition: transform 0.2s var(--ease-out);
+}
+
+.tool-card.is-disabled .tool-arrow {
+  color: var(--color-text-secondary);
   opacity: 0.5;
-  cursor: not-allowed;
 }
 
-.empty-state {
+.tool-card:hover:not(.is-disabled) .tool-arrow {
+  transform: translateX(4px);
+}
+
+/* Footer */
+.home-footer {
   text-align: center;
-  padding: 6rem 1rem;
-}
-
-.empty-state svg {
+  padding: 2rem 0 0;
+  font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  margin-bottom: 1rem;
-  opacity: 0.5;
+  border-top: 1px solid var(--color-border);
+  margin-top: 3rem;
 }
 
-.empty-text {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-}
-
+/* Animations */
 .fade-in {
-  animation: fadeIn 0.4s var(--ease-out) forwards;
-}
-
-.fade-in-delay-1 {
-  animation-delay: 0.1s;
-  opacity: 0;
-}
-
-.fade-in-delay-2 {
-  animation-delay: 0.2s;
-  opacity: 0;
-}
-
-.fade-in-delay-3 {
-  animation-delay: 0.3s;
-  opacity: 0;
+  animation: fadeIn 0.4s var(--ease-out) backwards;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -439,55 +312,42 @@ const clearAll = () => {
   }
 }
 
-/* Tablet and Mobile */
-@media (max-width: 1023px) {
-  .main-content {
-    flex-direction: column;
+/* Responsive */
+@media (max-width: 768px) {
+  .home-page {
+    padding: 2.5rem 1.25rem 2rem;
   }
 
-  .sidebar {
-    width: 100%;
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .sidebar-content {
-    padding: 1.5rem;
-  }
-
-  .sidebar-title {
-    font-size: 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .sidebar-actions {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-  }
-
-  .content-inner {
-    padding: 1.5rem;
+  .hero {
+    margin-bottom: 2.5rem;
   }
 
   .hero-title {
-    font-size: 1.125rem;
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tool-card {
+    min-height: 0;
+    padding: 1.25rem;
   }
 }
 
-/* Mobile */
 @media (max-width: 639px) {
-  .sidebar-content {
-    padding: 1rem;
+  .hero-eyebrow {
+    font-size: 0.75rem;
   }
 
-  .content-inner {
-    padding: 1rem;
-  }
-
-  .empty-state {
-    padding: 4rem 1rem;
+  .hero-title {
+    font-size: 1.75rem;
   }
 }
 </style>

@@ -1,7 +1,38 @@
 export default {
+  site: {
+    title: '图像工具箱'
+  },
   app: {
     title: '图片水印工具',
     subtitle: '本地安全地为图片添加水印'
+  },
+  home: {
+    eyebrow: '本地 · 隐私 · 免费',
+    title: '一组在浏览器中运行的图像工具集合',
+    subtitle: '选择一个工具即可开始。所有处理均在本地完成，文件不会离开你的设备。',
+    enter: '打开工具',
+    stayTuned: '敬请期待',
+    footerHint: '更多工具即将上线。隐私优先，本地处理。'
+  },
+  tools: {
+    backToTools: '返回工具箱',
+    comingSoon: '即将上线',
+    imageWatermark: {
+      name: '图片水印',
+      description: '为单张或多张图片添加文字水印，支持实时预览与批量导出。'
+    },
+    imageCompress: {
+      name: '图片压缩',
+      description: '在保持视觉质量的前提下减小图片体积，支持批量压缩。'
+    },
+    imageResize: {
+      name: '图片缩放',
+      description: '按自定义尺寸或预设比例一键缩放图片。'
+    },
+    imageConvert: {
+      name: '图片转换',
+      description: '在 JPG、PNG、WebP 等格式之间本地快速转换。'
+    }
   },
   header: {
     darkMode: '暗黑模式',

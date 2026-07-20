@@ -2,7 +2,17 @@
   <header class="header">
     <div class="header-content">
       <div class="header-brand">
-        <h1 class="header-title">{{ t('app.title') }}</h1>
+        <router-link to="/" class="header-brand-link">
+          <span class="header-brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </span>
+          <h1 class="header-title">{{ t('site.title') }}</h1>
+        </router-link>
         <nav class="header-nav">
           <router-link to="/" class="nav-link" exact-active-class="active">{{ t('nav.home') }}</router-link>
           <router-link to="/about" class="nav-link" active-class="active">{{ t('nav.about') }}</router-link>
@@ -107,10 +117,41 @@ const handleLocaleChange = (e: Event) => {
   gap: 1.5rem;
 }
 
+.header-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.header-brand-link:hover {
+  opacity: 0.8;
+}
+
+.header-brand-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
+
+.header-brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(var(--color-accent-rgb), 0.1);
+  color: var(--color-accent);
+  border-radius: 0.5rem;
+}
+
 .header-title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--color-text-primary);
+  letter-spacing: -0.01em;
 }
 
 .header-nav {

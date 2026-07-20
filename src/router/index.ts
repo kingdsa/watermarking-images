@@ -6,6 +6,12 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: HomeView,
+    meta: { title: 'home' }
+  },
+  {
+    path: '/tools/watermark',
+    name: 'image-watermark',
+    component: () => import('../views/WatermarkToolView.vue'),
     meta: { title: 'imageWatermark' }
   },
   {
