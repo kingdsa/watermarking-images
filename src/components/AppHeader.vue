@@ -10,7 +10,6 @@
         </router-link>
         <nav class="header-nav">
           <router-link to="/" class="nav-link" exact-active-class="active">{{ t('nav.home') }}</router-link>
-          <router-link to="/about" class="nav-link" active-class="active">{{ t('nav.about') }}</router-link>
         </nav>
       </div>
 

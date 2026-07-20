@@ -40,8 +40,7 @@ export default {
     onlineUsers: 'Online'
   },
   nav: {
-    home: 'Home',
-    about: 'About'
+    home: 'Home'
   },
   upload: {
     title: 'Upload Images',
@@ -81,16 +80,6 @@ export default {
     noImages: 'No images uploaded yet',
     error: 'Processing failed',
     timeout: 'Processing timeout, please retry'
-  },
-  about: {
-    features: 'Features',
-    feature1: 'Add text watermarks with custom font size, color, and opacity',
-    feature2: 'Support batch processing of multiple images',
-    feature3: 'Real-time preview with debounced auto-update',
-    feature4: 'Download all watermarked images as a ZIP archive',
-    privacy: 'Privacy First',
-    privacyText: 'All image processing happens locally in your browser. Your images are never uploaded to any server.',
-    backHome: 'Back to Home'
   },
   notFound: {
     message: 'The page you are looking for does not exist.',

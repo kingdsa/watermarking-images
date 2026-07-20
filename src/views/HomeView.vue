@@ -60,8 +60,8 @@ const { t } = useI18n()
 <style scoped>
 .home-page {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 4rem 1.5rem 3rem;
+  margin: 70px auto 0;
+  padding: 2.5rem 1.5rem 3rem;
 }
 
 /* Hero */
@@ -306,7 +306,7 @@ const { t } = useI18n()
 /* Responsive */
 @media (max-width: 768px) {
   .home-page {
-    padding: 2.5rem 1.25rem 2rem;
+    padding: 1.5rem 1.25rem 2rem;
   }
 
   .hero {

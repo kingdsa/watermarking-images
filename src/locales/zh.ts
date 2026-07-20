@@ -40,8 +40,7 @@ export default {
     onlineUsers: '在线'
   },
   nav: {
-    home: '首页',
-    about: '关于'
+    home: '首页'
   },
   upload: {
     title: '上传图片',
@@ -81,16 +80,6 @@ export default {
     noImages: '还没有上传图片',
     error: '处理失败',
     timeout: '处理超时，请重试'
-  },
-  about: {
-    features: '功能特性',
-    feature1: '自定义字体大小、颜色和透明度的文字水印',
-    feature2: '支持多图批量处理',
-    feature3: '实时预览，防抖自动更新',
-    feature4: '一键打包下载所有水印图片为 ZIP',
-    privacy: '隐私优先',
-    privacyText: '所有图片处理均在浏览器本地完成，您的图片不会被上传到任何服务器。',
-    backHome: '返回首页'
   },
   notFound: {
     message: '您访问的页面不存在。',
