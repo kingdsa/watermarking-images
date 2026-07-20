@@ -3,6 +3,10 @@
     <div class="header-content">
       <div class="header-brand">
         <h1 class="header-title">{{ t('app.title') }}</h1>
+        <nav class="header-nav">
+          <router-link to="/" class="nav-link" exact-active-class="active">{{ t('nav.home') }}</router-link>
+          <router-link to="/about" class="nav-link" active-class="active">{{ t('nav.about') }}</router-link>
+        </nav>
       </div>
 
       <div class="header-controls">
@@ -97,10 +101,41 @@ const handleLocaleChange = (e: Event) => {
   gap: 1rem;
 }
 
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 .header-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-text-primary);
+}
+
+.header-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-text-primary);
+  background: var(--color-background);
+}
+
+.nav-link.active {
+  color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.08);
 }
 
 .header-controls {
@@ -260,6 +295,21 @@ const handleLocaleChange = (e: Event) => {
   .header-content {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .header-brand {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-nav {
+    gap: 0.25rem;
+  }
+
+  .nav-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8125rem;
   }
 
   .header-controls {
