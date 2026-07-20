@@ -24,7 +24,7 @@
             :height="15"
           />
           <span>{{ t(`uiColor.section${p === 'mobile' ? 'Mobile' : 'PC'}`) }}</span>
-          <span class="tab-count">{{ schemes.length }}</span>
+          <span class="tab-count">{{ schemeCount(p) }}</span>
         </button>
       </div>
 
@@ -37,6 +37,13 @@
             :style="{ animationDelay: `${0.04 + index * 0.05}s` }"
           >
             <div class="preview-wrap" :style="posterStyle(scheme)">
+              <span
+                v-if="scheme.region === 'overseas'"
+                class="region-badge"
+                :style="regionBadgeStyle(scheme)"
+              >
+                {{ t('uiColor.regionOverseas') }}
+              </span>
               <div class="poster-panel" :style="posterPanelStyle(scheme)">
                 <div class="poster-strips">
                   <div
@@ -105,152 +112,28 @@ import checkIcon from '@iconify-icons/lucide/check'
 import smartphoneIcon from '@iconify-icons/lucide/smartphone'
 import monitorIcon from '@iconify-icons/lucide/monitor'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import { useTheme } from '../composables/useTheme'
+import {
+  uiColorSchemes,
+  type SchemeRole,
+  type GradientPair,
+  type SchemeColorSet,
+  type ColorScheme
+} from '../config/uiColorSchemes'
 
 const router = useRouter()
 const { t } = useI18n()
 const { theme } = useTheme()
 
-type SchemeRole = 'primary' | 'secondary' | 'accent' | 'background' | 'surface'
-type GradientPair = [SchemeRole, SchemeRole]
-interface SchemeColorSet {
-  primary: string
-  secondary: string
-  accent: string
-  background: string
-  surface: string
-  textPrimary: string
-  textSecondary: string
-  border: string
-}
-interface ColorScheme {
-  id: string
-  light: SchemeColorSet
-  dark: SchemeColorSet
-}
-
-const schemes: ColorScheme[] = [
-  {
-    id: 'minimalPro',
-    light: {
-      primary: '#1E2227',
-      secondary: '#6B7077',
-      accent: '#3C5A78',
-      background: '#F7F5F1',
-      surface: '#FFFFFF',
-      textPrimary: '#1E2227',
-      textSecondary: '#6B7077',
-      border: '#E7E3DA'
-    },
-    dark: {
-      primary: '#E8E6E3',
-      secondary: '#9BA1A6',
-      accent: '#5B7FA1',
-      background: '#1A1D21',
-      surface: '#242830',
-      textPrimary: '#E8E6E3',
-      textSecondary: '#9BA1A6',
-      border: '#363A42'
-    }
-  },
-  {
-    id: 'oceanTech',
-    light: {
-      primary: '#0284C7',
-      secondary: '#0EA5E9',
-      accent: '#06B6D4',
-      background: '#F0F9FF',
-      surface: '#FFFFFF',
-      textPrimary: '#0C1E33',
-      textSecondary: '#475569',
-      border: '#BAE6FD'
-    },
-    dark: {
-      primary: '#38BDF8',
-      secondary: '#0EA5E9',
-      accent: '#22D3EE',
-      background: '#0B1220',
-      surface: '#111C30',
-      textPrimary: '#E0F2FE',
-      textSecondary: '#94A3B8',
-      border: '#1E3A5F'
-    }
-  },
-  {
-    id: 'vibrantWarmth',
-    light: {
-      primary: '#EA580C',
-      secondary: '#F59E0B',
-      accent: '#DC2626',
-      background: '#FFF7ED',
-      surface: '#FFFFFF',
-      textPrimary: '#1F1311',
-      textSecondary: '#78350F',
-      border: '#FED7AA'
-    },
-    dark: {
-      primary: '#FB923C',
-      secondary: '#FBBF24',
-      accent: '#F87171',
-      background: '#1B0F0A',
-      surface: '#2A1810',
-      textPrimary: '#FFEDD5',
-      textSecondary: '#D6A87A',
-      border: '#3F2317'
-    }
-  },
-  {
-    id: 'forestNature',
-    light: {
-      primary: '#16A34A',
-      secondary: '#65A30D',
-      accent: '#059669',
-      background: '#F0FDF4',
-      surface: '#FFFFFF',
-      textPrimary: '#0F1F0E',
-      textSecondary: '#4D7C0F',
-      border: '#BBF7D0'
-    },
-    dark: {
-      primary: '#4ADE80',
-      secondary: '#A3E635',
-      accent: '#34D399',
-      background: '#0A1A0F',
-      surface: '#102617',
-      textPrimary: '#DCFCE7',
-      textSecondary: '#86EFAC',
-      border: '#1F3D27'
-    }
-  },
-  {
-    id: 'purpleDream',
-    light: {
-      primary: '#9333EA',
-      secondary: '#EC4899',
-      accent: '#8B5CF6',
-      background: '#FDF4FF',
-      surface: '#FFFFFF',
-      textPrimary: '#1F0A2E',
-      textSecondary: '#6B21A8',
-      border: '#E9D5FF'
-    },
-    dark: {
-      primary: '#C084FC',
-      secondary: '#F472B6',
-      accent: '#A78BFA',
-      background: '#15082A',
-      surface: '#20113C',
-      textPrimary: '#F3E8FF',
-      textSecondary: '#C4B5FD',
-      border: '#312E5F'
-    }
-  }
-]
-
 const platforms: ('mobile' | 'pc')[] = ['mobile', 'pc']
 const activePlatform = ref<'mobile' | 'pc'>('mobile')
+const schemes = computed(() =>
+  uiColorSchemes.filter(s => !s.platform || s.platform === 'both' || s.platform === activePlatform.value)
+)
+const schemeCount = (platform: 'mobile' | 'pc') =>
+  uiColorSchemes.filter(s => !s.platform || s.platform === 'both' || s.platform === platform).length
 const paletteRoles: SchemeRole[] = ['primary', 'secondary', 'accent', 'background', 'surface']
 const gradientPairs: GradientPair[] = [
   ['primary', 'secondary'],
@@ -328,6 +211,16 @@ const descTagStyle = (scheme: ColorScheme) => ({
   background: `${schemeColors(scheme).primary}1A`,
   color: schemeColors(scheme).primary
 })
+
+const regionBadgeStyle = (scheme: ColorScheme) => {
+  const colors = schemeColors(scheme)
+  return {
+    background: `${colors.surface}E6`,
+    color: colors.primary,
+    borderColor: `${colors.border}99`,
+    boxShadow: `0 4px 14px ${colors.primary}26`
+  }
+}
 
 const copyColor = (scheme: ColorScheme, role: SchemeRole, key: string) => {
   const value = schemeColors(scheme)[role]
@@ -500,6 +393,24 @@ const copyColor = (scheme: ColorScheme, role: SchemeRole, key: string) => {
   justify-content: center;
   min-height: 368px;
   overflow: hidden;
+}
+
+.region-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  backdrop-filter: blur(6px);
+  font-family: var(--font-sans);
+  pointer-events: none;
 }
 
 .preview-wrap::before {

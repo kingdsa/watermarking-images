@@ -93,6 +93,7 @@ export default {
     placeholder: 'Coming soon',
     sectionMobile: 'Mobile',
     sectionPC: 'Desktop',
+    regionOverseas: 'Overseas',
     schemeTags: {
       primary: 'Primary',
       secondary: 'Secondary',
@@ -103,6 +104,36 @@ export default {
     copyHint: 'Click swatch to copy hex',
     copied: 'Copied',
     schemes: {
+      cobaltSlate: {
+        name: 'Cobalt Slate',
+        summary: 'Linear-style cobalt blue with slate gray - calm, professional, SaaS.',
+        description: 'Inspired by overseas SaaS products like Linear and Vercel. Cobalt primary with slate secondary on a near-white background feels restrained and professional - ideal for B2B tools, developer platforms, and dashboards.'
+      },
+      creamLatte: {
+        name: 'Cream Latte',
+        summary: 'Warm coffee-shop latte tones - mellow, earthy, lifestyle.',
+        description: 'Inspired by overseas coffee brands and lifestyle apps. Cream background with coffee-brown primary and caramel accent conveys a handcrafted warmth - suited to lifestyle, baking, and indie-brand mobile apps.'
+      },
+      graphiteMono: {
+        name: 'Graphite Mono',
+        summary: 'Stripe / Vercel-style minimal mono - pure, restrained, premium.',
+        description: 'Near-black graphite primary paired with neutral grays, with no chromatic distraction. A hallmark of overseas minimalism - ideal for high-end tools, content platforms, and design-focused products that let content lead.'
+      },
+      tuscanyTerracotta: {
+        name: 'Tuscany Terracotta',
+        summary: 'Mediterranean terracotta and warm brown - earthy, sunny, vintage.',
+        description: 'Inspired by Tuscan and Mediterranean architecture. Terracotta primary with warm brown secondary on an off-white background evokes sunlit countryside - perfect for travel, home, and food apps with an overseas feel.'
+      },
+      provenceLavender: {
+        name: 'Provence Lavender',
+        summary: 'Soft lavender from southern France - elegant, serene, romantic.',
+        description: 'Inspired by Provence lavender fields. Soft lavender primary with grey-purple secondary and low saturation creates a serene mood - suited to fragrance, skincare, and travel apps seeking French elegance.'
+      },
+      nordicFjord: {
+        name: 'Nordic Fjord',
+        summary: 'Scandinavian deep blue-gray - calm, natural, minimal.',
+        description: 'Inspired by Nordic fjords and Scandinavian design. Deep sea-blue primary with misty blue-gray secondary on a cool neutral background feels restrained and natural - ideal for productivity, reading, and outdoor apps with an overseas feel.'
+      },
       minimalPro: {
         name: 'Minimal Pro',
         summary: 'Monochrome slate with a muted blue accent — quiet, capable, trustworthy.',
@@ -125,8 +156,58 @@ export default {
       },
       purpleDream: {
         name: 'Purple Dream',
-        summary: 'Violet primary with pink and lilac accents — imaginative, premium, bold.',
+        summary: 'Violet primary with pink and lilac accents - imaginative, premium, bold.',
         description: 'A expressive purple system for creative, design, and AI products. Pink and lilac accents add personality without overwhelming. Reserve dark violet for primary actions only.'
+      },
+      sunsetGlow: {
+        name: 'Sunset Glow',
+        summary: 'Rose and sunset orange blending - romantic, warm, social.',
+        description: 'A warm palette of rose primary with orange secondary. Suited to social, short-video, and lifestyle mobile apps. Reserve accent for key interactions to keep rhythm.'
+      },
+      mintFresh: {
+        name: 'Mint Fresh',
+        summary: 'Teal and mint green naturally paired - fresh, healthy, airy.',
+        description: 'A fresh teal-green palette for health tracking, fitness, and lightweight utility apps. Low-saturation backgrounds with vivid primary ensure outdoor readability.'
+      },
+      cyberNeon: {
+        name: 'Cyber Neon',
+        summary: 'Violet, magenta, and cyan colliding - edgy, sci-fi, trendy.',
+        description: 'A high-contrast neon palette for gaming, metaverse, and designer-toy mobile products. Dark backgrounds make neon highlights pop with a futuristic vibe.'
+      },
+      roseQuartz: {
+        name: 'Rose Quartz',
+        summary: 'Soft pink with rose red - elegant, refined, feminine.',
+        description: 'A gentle pink palette for beauty, fashion, and women-focused community apps. Light pink backgrounds with deep rose primary balance softness and depth.'
+      },
+      inkLavender: {
+        name: 'Ink Lavender',
+        summary: 'Indigo and lavender in calm harmony - deep, focused, readable.',
+        description: 'An indigo-led, lavender-accented palette for reading, education, and knowledge-app apps. Cool backgrounds reduce visual strain for long sessions.'
+      },
+      tropicalCoral: {
+        name: 'Tropical Coral',
+        summary: 'Coral red with amber orange - energetic, vacation, appetizing.',
+        description: 'A vibrant red-orange palette for travel, food, and event-booking apps. Warm backgrounds set a holiday mood, with deep red for key actions.'
+      },
+      midnightGold: {
+        name: 'Midnight Gold',
+        summary: 'Deep base with gilded gold - luxurious, steady, financial.',
+        description: 'A dark-background, gold-primary palette for finance, wealth, and premium-member apps. Gold is reserved for core actions and brand elements to convey quality.'
+      },
+      springMatcha: {
+        name: 'Spring Matcha',
+        summary: 'Matcha green with sprout yellow - organic, light, lively.',
+        description: 'A natural matcha-green palette for light-food, wellness, and eco apps. Low-saturation backgrounds with a vivid primary convey health and vitality.'
+      },
+      auroraBerry: {
+        name: 'Aurora Berry',
+        summary: 'Deep purple, magenta, and indigo aurora - dreamy, creative, musical.',
+        description: 'An expressive purple-blue palette for music, creation, and AI-generation apps. Multi-color gradients lead the brand while deep purple keeps focus.'
+      },
+      glacierIce: {
+        name: 'Glacier Ice',
+        summary: 'Cyan blue with glacier gray - cool, professional, sporty.',
+        description: 'A cool cyan palette for sports-data, weather, and productivity apps. High text contrast keeps information crisp, while cool tones convey precision.'
       }
     }
   }
