@@ -36,74 +36,27 @@
             class="scheme-card fade-in"
             :style="{ animationDelay: `${0.04 + index * 0.05}s` }"
           >
-            <div class="preview-wrap" :style="previewStyle(scheme)">
-              <!-- Mobile preview -->
-              <div v-if="activePlatform === 'mobile'" class="phone-mock" :style="mockWrapStyle(scheme)">
-                <div class="phone-notch" :style="{ background: schemeColors(scheme).primary }"></div>
-                <div class="phone-screen" :style="screenStyle(scheme)">
-                  <div class="phone-statusbar" :style="statusbarStyle(scheme)">
-                    <span class="phone-time">9:41</span>
-                    <span class="phone-dots">
-                      <i></i><i></i><i></i>
+            <div class="preview-wrap" :style="posterStyle(scheme)">
+              <div class="poster-panel" :style="posterPanelStyle(scheme)">
+                <div class="poster-strips">
+                  <div
+                    v-for="role in paletteRoles"
+                    :key="role"
+                    class="poster-swatch-column"
+                  >
+                    <span class="poster-strip" :style="posterStripStyle(scheme, role)"></span>
+                    <span class="poster-hex" :style="posterHexStyle(scheme, role)">
+                      {{ schemeColors(scheme)[role] }}
                     </span>
                   </div>
-                  <div class="phone-header" :style="headerStyle(scheme)">
-                    <span class="phone-title">{{ t(`uiColor.schemes.${scheme.id}.name`) }}</span>
-                    <span class="phone-avatar" :style="{ background: schemeColors(scheme).accent }"></span>
-                  </div>
-                  <div class="phone-card" :style="cardStyle(scheme, 0)">
-                    <span class="phone-card-label" :style="{ color: schemeColors(scheme).textSecondary }">Balance</span>
-                    <span class="phone-card-value" :style="{ color: schemeColors(scheme).textPrimary }">¥ 8,420</span>
-                    <span class="phone-card-tag" :style="tagStyle(scheme, schemeColors(scheme).primary)">+12.4%</span>
-                  </div>
-                  <div class="phone-list">
-                    <div v-for="n in 3" :key="n" class="phone-list-row" :style="listRowStyle(scheme, n - 1)">
-                      <span class="row-dot" :style="{ background: [schemeColors(scheme).primary, schemeColors(scheme).secondary, schemeColors(scheme).accent][n - 1] }"></span>
-                      <span class="row-bar" :style="rowBarStyle(scheme)"></span>
-                      <span class="row-bar short" :style="rowBarStyle(scheme, 0.6)"></span>
-                    </div>
-                  </div>
-                  <div class="phone-fab" :style="fabStyle(scheme)">
-                    <Icon :icon="plusIcon" :width="18" :height="18" />
-                  </div>
                 </div>
-              </div>
-
-              <!-- PC preview -->
-              <div v-else class="browser-mock" :style="mockWrapStyle(scheme)">
-                <div class="browser-bar" :style="browserBarStyle(scheme)">
-                  <span class="browser-dot" :style="{ background: '#FF5F57' }"></span>
-                  <span class="browser-dot" :style="{ background: '#FEBC2E' }"></span>
-                  <span class="browser-dot" :style="{ background: '#28C840' }"></span>
-                  <span class="browser-url" :style="urlBarStyle(scheme)">app.{{ scheme.id }}.com</span>
-                </div>
-                <div class="browser-body" :style="screenStyle(scheme)">
-                  <aside class="browser-sidebar" :style="sidebarStyle(scheme)">
-                    <span class="sb-logo" :style="{ background: schemeColors(scheme).primary }"></span>
-                    <span v-for="n in 4" :key="n" class="sb-item" :style="sbItemStyle(scheme, n - 1)"></span>
-                  </aside>
-                  <main class="browser-main">
-                    <header class="browser-header" :style="headerStyle(scheme)">
-                      <span class="browser-title" :style="{ color: schemeColors(scheme).textPrimary }">{{ t(`uiColor.schemes.${scheme.id}.name`) }}</span>
-                      <span class="browser-search" :style="searchStyle(scheme)"></span>
-                      <span class="browser-avatar" :style="{ background: schemeColors(scheme).accent }"></span>
-                    </header>
-                    <div class="browser-stats">
-                      <div v-for="n in 3" :key="n" class="stat-card" :style="cardStyle(scheme, n - 1)">
-                        <span class="stat-label" :style="{ color: schemeColors(scheme).textSecondary }">Metric {{ n }}</span>
-                        <span class="stat-value" :style="{ color: schemeColors(scheme).textPrimary }">{{ ['24.8K', '92.1%', '1,284'][n - 1] }}</span>
-                        <span class="stat-bar" :style="statBarStyle(scheme, n - 1)"></span>
-                      </div>
-                    </div>
-                    <div class="browser-chart" :style="chartStyle(scheme)">
-                      <div
-                        v-for="(h, i) in [40, 65, 35, 80, 55, 90, 48]"
-                        :key="i"
-                        class="chart-bar"
-                        :style="chartBarStyle(scheme, h, i)"
-                      ></div>
-                    </div>
-                  </main>
+                <div class="poster-gradients">
+                  <span
+                    v-for="(pair, dotIndex) in gradientPairs"
+                    :key="dotIndex"
+                    class="poster-gradient-dot"
+                    :style="posterGradientDotStyle(scheme, pair)"
+                  ></span>
                 </div>
               </div>
             </div>
@@ -130,7 +83,9 @@
             <div class="card-desc">
               <div class="desc-head">
                 <h4 class="desc-name">{{ t(`uiColor.schemes.${scheme.id}.name`) }}</h4>
-                <span class="desc-tag" :style="descTagStyle(scheme)">{{ activePlatform === 'mobile' ? 'Mobile' : 'Desktop' }}</span>
+                <span class="desc-tag" :style="descTagStyle(scheme)">
+                  {{ t(activePlatform === 'mobile' ? 'uiColor.sectionMobile' : 'uiColor.sectionPC') }}
+                </span>
               </div>
               <p class="desc-summary">{{ t(`uiColor.schemes.${scheme.id}.summary`) }}</p>
               <p class="desc-detail">{{ t(`uiColor.schemes.${scheme.id}.description`) }}</p>
@@ -146,7 +101,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import arrowLeftIcon from '@iconify-icons/lucide/arrow-left'
-import plusIcon from '@iconify-icons/lucide/plus'
 import checkIcon from '@iconify-icons/lucide/check'
 import smartphoneIcon from '@iconify-icons/lucide/smartphone'
 import monitorIcon from '@iconify-icons/lucide/monitor'
@@ -160,6 +114,7 @@ const { t } = useI18n()
 const { theme } = useTheme()
 
 type SchemeRole = 'primary' | 'secondary' | 'accent' | 'background' | 'surface'
+type GradientPair = [SchemeRole, SchemeRole]
 interface SchemeColorSet {
   primary: string
   secondary: string
@@ -297,6 +252,13 @@ const schemes: ColorScheme[] = [
 const platforms: ('mobile' | 'pc')[] = ['mobile', 'pc']
 const activePlatform = ref<'mobile' | 'pc'>('mobile')
 const paletteRoles: SchemeRole[] = ['primary', 'secondary', 'accent', 'background', 'surface']
+const gradientPairs: GradientPair[] = [
+  ['primary', 'secondary'],
+  ['secondary', 'accent'],
+  ['accent', 'background'],
+  ['background', 'surface'],
+  ['surface', 'primary']
+]
 
 const copiedKey = ref<string>('')
 
@@ -308,106 +270,49 @@ const schemeColors = (scheme: ColorScheme): SchemeColorSet => {
   return theme.value === 'dark' ? scheme.dark : scheme.light
 }
 
-const previewStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).background
-})
+const posterStyle = (scheme: ColorScheme) => {
+  const colors = schemeColors(scheme)
+  return {
+    background: `
+      radial-gradient(circle at 15% 85%, ${colors.surface}88 0, transparent 34%),
+      radial-gradient(circle at 78% 18%, ${colors.accent}AA 0, transparent 42%),
+      linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary} 36%, ${colors.background} 72%, ${colors.accent} 100%)
+    `
+  }
+}
 
-const mockWrapStyle = (scheme: ColorScheme) => ({
-  '--mc-primary': schemeColors(scheme).primary,
-  '--mc-secondary': schemeColors(scheme).secondary,
-  '--mc-accent': schemeColors(scheme).accent,
-  '--mc-bg': schemeColors(scheme).background,
-  '--mc-surface': schemeColors(scheme).surface,
-  '--mc-text': schemeColors(scheme).textPrimary,
-  '--mc-text-2': schemeColors(scheme).textSecondary,
-  '--mc-border': schemeColors(scheme).border
-})
+const posterPanelStyle = (scheme: ColorScheme) => {
+  const colors = schemeColors(scheme)
+  return {
+    background: theme.value === 'dark' ? `${colors.surface}F0` : 'rgba(255, 255, 255, 0.92)',
+    border: `1px solid ${theme.value === 'dark' ? colors.border : 'rgba(255, 255, 255, 0.66)'}`,
+    boxShadow: `0 18px 34px ${colors.primary}26`
+  }
+}
 
-const screenStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).background
-})
+const posterStripStyle = (scheme: ColorScheme, role: SchemeRole) => {
+  const colors = schemeColors(scheme)
+  return {
+    background: colors[role],
+    border: `1px solid ${colors.border}88`
+  }
+}
 
-const statusbarStyle = (scheme: ColorScheme) => ({
-  color: schemeColors(scheme).textSecondary,
-  background: schemeColors(scheme).surface,
-  borderBottom: `1px solid ${schemeColors(scheme).border}`
-})
+const posterHexStyle = (scheme: ColorScheme, role: SchemeRole) => {
+  const colors = schemeColors(scheme)
+  const mutedRole = role === 'background' || role === 'surface'
+  return {
+    color: mutedRole ? colors.textSecondary : colors[role]
+  }
+}
 
-const headerStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).surface,
-  borderBottom: `1px solid ${schemeColors(scheme).border}`
-})
-
-const cardStyle = (scheme: ColorScheme, index: number) => ({
-  background: schemeColors(scheme).surface,
-  border: `1px solid ${schemeColors(scheme).border}`,
-  boxShadow: index === 0 ? `0 6px 16px ${schemeColors(scheme).primary}22` : 'none'
-})
-
-const tagStyle = (_scheme: ColorScheme, color: string) => ({
-  background: `${color}1A`,
-  color
-})
-
-const listRowStyle = (scheme: ColorScheme, index: number) => ({
-  background: index % 2 === 0 ? schemeColors(scheme).surface : 'transparent',
-  borderBottom: `1px solid ${schemeColors(scheme).border}`
-})
-
-const rowBarStyle = (scheme: ColorScheme, opacity = 1) => ({
-  background: schemeColors(scheme).textSecondary,
-  opacity: opacity * (theme.value === 'dark' ? 0.6 : 1)
-})
-
-const fabStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).primary,
-  boxShadow: `0 6px 14px ${schemeColors(scheme).primary}55`
-})
-
-const browserBarStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).surface,
-  borderBottom: `1px solid ${schemeColors(scheme).border}`
-})
-
-const urlBarStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).background,
-  color: schemeColors(scheme).textSecondary,
-  border: `1px solid ${schemeColors(scheme).border}`
-})
-
-const sidebarStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).surface,
-  borderRight: `1px solid ${schemeColors(scheme).border}`
-})
-
-const sbItemStyle = (scheme: ColorScheme, index: number) => ({
-  background: index === 0 ? schemeColors(scheme).primary : schemeColors(scheme).border,
-  opacity: index === 0 ? 1 : 0.7
-})
-
-const searchStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).background,
-  border: `1px solid ${schemeColors(scheme).border}`
-})
-
-const statBarStyle = (scheme: ColorScheme, index: number) => ({
-  background: [
-    schemeColors(scheme).primary,
-    schemeColors(scheme).secondary,
-    schemeColors(scheme).accent
-  ][index]
-})
-
-const chartStyle = (scheme: ColorScheme) => ({
-  background: schemeColors(scheme).surface,
-  border: `1px solid ${schemeColors(scheme).border}`
-})
-
-const chartBarStyle = (scheme: ColorScheme, height: number, index: number) => ({
-  height: `${height}%`,
-  background: index % 2 === 0 ? schemeColors(scheme).primary : schemeColors(scheme).accent,
-  opacity: 0.85
-})
+const posterGradientDotStyle = (scheme: ColorScheme, [from, to]: GradientPair) => {
+  const colors = schemeColors(scheme)
+  return {
+    background: `linear-gradient(90deg, ${colors[from]} 0%, ${colors[to]} 100%)`,
+    boxShadow: `inset 0 0 0 1px ${colors.border}80`
+  }
+}
 
 const swatchStyle = (scheme: ColorScheme, role: SchemeRole) => {
   const color = schemeColors(scheme)[role]
@@ -589,311 +494,75 @@ const copyColor = (scheme: ColorScheme, role: SchemeRole, key: string) => {
 /* Preview area */
 .preview-wrap {
   position: relative;
-  padding: 1.5rem 1.5rem 1.25rem;
+  padding: 1.625rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 280px;
+  min-height: 368px;
   overflow: hidden;
 }
 
-.preview-wrap::after {
+.preview-wrap::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.06), transparent 60%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 36%, rgba(255, 255, 255, 0.14));
   pointer-events: none;
 }
 
-/* ============ Mobile mockup ============ */
-.phone-mock {
+/* ============ Gradient poster preview ============ */
+.poster-panel {
   position: relative;
-  width: 168px;
-  height: 320px;
-  border-radius: 28px;
-  background: #0F1115;
-  padding: 8px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-.phone-notch {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 64px;
-  height: 14px;
-  border-radius: 0 0 12px 12px;
-  z-index: 2;
-  opacity: 0.85;
-}
-
-.phone-screen {
-  position: relative;
+  z-index: 1;
   width: 100%;
-  height: 100%;
-  border-radius: 22px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  max-width: 278px;
+  padding: 1rem 0.75rem 0.875rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(6px);
 }
 
-.phone-statusbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px 4px;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.phone-dots {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.phone-dots i {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.6;
-}
-
-.phone-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px 10px;
-}
-
-.phone-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--mc-text);
-}
-
-.phone-avatar {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-}
-
-.phone-card {
-  margin: 0 10px 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.phone-card-label {
-  font-size: 8px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.phone-card-value {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.phone-card-tag {
-  align-self: flex-start;
-  font-size: 8px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-
-.phone-list {
-  flex: 1;
-  margin: 0 10px;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.phone-list-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 10px;
-}
-
-.row-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.row-bar {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
-}
-
-.row-bar.short {
-  flex: 0 0 28px;
-}
-
-.phone-fab {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
-
-/* ============ PC / Browser mockup ============ */
-.browser-mock {
-  width: 100%;
-  max-width: 380px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #0F1115;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-.browser-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-}
-
-.browser-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.browser-url {
-  flex: 1;
-  margin-left: 8px;
-  padding: 3px 10px;
-  font-size: 9px;
-  font-weight: 500;
-  border-radius: 999px;
-  text-align: center;
-}
-
-.browser-body {
-  display: flex;
-  height: 220px;
-}
-
-.browser-sidebar {
-  width: 44px;
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.sb-logo {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-}
-
-.sb-item {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-}
-
-.browser-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  gap: 10px;
-}
-
-.browser-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 8px;
-}
-
-.browser-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.browser-search {
-  flex: 1;
-  height: 14px;
-  border-radius: 4px;
-}
-
-.browser-avatar {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-}
-
-.browser-stats {
+.poster-strips {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
 }
 
-.stat-card {
-  padding: 6px 8px;
-  border-radius: 6px;
+.poster-swatch-column {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 0.375rem;
 }
 
-.stat-label {
-  font-size: 7px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.poster-strip {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 2.92;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
-.stat-value {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+.poster-hex {
+  width: 100%;
+  font-size: 0.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.stat-bar {
-  height: 3px;
-  border-radius: 2px;
-  margin-top: 2px;
-  opacity: 0.85;
+.poster-gradients {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.625rem;
 }
 
-.browser-chart {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 8px;
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.chart-bar {
-  flex: 1;
-  border-radius: 3px 3px 0 0;
-  min-height: 4px;
+.poster-gradient-dot {
+  aspect-ratio: 1;
+  border-radius: 50%;
 }
 
 /* ============ Palette ============ */
@@ -1051,19 +720,9 @@ const copyColor = (scheme: ColorScheme, role: SchemeRole, key: string) => {
   }
 
   .preview-wrap {
-    padding: 1.25rem 1rem 1rem;
-    min-height: 240px;
+    padding: 1.375rem 1.25rem;
+    min-height: 344px;
   }
 }
 
-@media (max-width: 480px) {
-  .phone-mock {
-    width: 150px;
-    height: 290px;
-  }
-
-  .browser-body {
-    height: 180px;
-  }
-}
 </style>
