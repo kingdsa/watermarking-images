@@ -1,6 +1,20 @@
 export type SchemeRole = 'primary' | 'secondary' | 'accent' | 'background' | 'surface'
 export type GradientPair = [SchemeRole, SchemeRole]
 
+export type ColorFamily =
+  | 'blue'
+  | 'cyan'
+  | 'green'
+  | 'yellow'
+  | 'orange'
+  | 'red'
+  | 'pink'
+  | 'purple'
+  | 'brown'
+  | 'gray'
+
+export type SchemeRegion = 'overseas' | 'mainland'
+
 export interface SchemeColorSet {
   primary: string
   secondary: string
@@ -15,7 +29,8 @@ export interface SchemeColorSet {
 export interface ColorScheme {
   id: string
   platform?: 'mobile' | 'pc' | 'both'
-  region?: 'overseas'
+  region: SchemeRegion
+  colorFamily: ColorFamily
   light: SchemeColorSet
   dark: SchemeColorSet
 }
@@ -25,6 +40,7 @@ export const uiColorSchemes: ColorScheme[] = [
     id: 'cobaltSlate',
     platform: 'mobile',
     region: 'overseas',
+    colorFamily: 'blue',
     light: {
       primary: '#1D4ED8',
       secondary: '#475569',
@@ -50,6 +66,7 @@ export const uiColorSchemes: ColorScheme[] = [
     id: 'creamLatte',
     platform: 'mobile',
     region: 'overseas',
+    colorFamily: 'brown',
     light: {
       primary: '#8B5E3C',
       secondary: '#A87B5E',
@@ -75,6 +92,7 @@ export const uiColorSchemes: ColorScheme[] = [
     id: 'graphiteMono',
     platform: 'mobile',
     region: 'overseas',
+    colorFamily: 'gray',
     light: {
       primary: '#18181B',
       secondary: '#52525B',
@@ -100,6 +118,7 @@ export const uiColorSchemes: ColorScheme[] = [
     id: 'tuscanyTerracotta',
     platform: 'mobile',
     region: 'overseas',
+    colorFamily: 'orange',
     light: {
       primary: '#B85C38',
       secondary: '#9C6644',
@@ -125,6 +144,7 @@ export const uiColorSchemes: ColorScheme[] = [
     id: 'provenceLavender',
     platform: 'mobile',
     region: 'overseas',
+    colorFamily: 'purple',
     light: {
       primary: '#7C6F9F',
       secondary: '#9B8AB8',
@@ -150,6 +170,7 @@ export const uiColorSchemes: ColorScheme[] = [
     id: 'nordicFjord',
     platform: 'mobile',
     region: 'overseas',
+    colorFamily: 'blue',
     light: {
       primary: '#1E3A5F',
       secondary: '#4A6B8A',
@@ -173,6 +194,8 @@ export const uiColorSchemes: ColorScheme[] = [
   },
   {
     id: 'minimalPro',
+    region: 'mainland',
+    colorFamily: 'gray',
     light: {
       primary: '#1E2227',
       secondary: '#6B7077',
@@ -196,6 +219,8 @@ export const uiColorSchemes: ColorScheme[] = [
   },
   {
     id: 'oceanTech',
+    region: 'mainland',
+    colorFamily: 'blue',
     light: {
       primary: '#0284C7',
       secondary: '#0EA5E9',
@@ -219,6 +244,8 @@ export const uiColorSchemes: ColorScheme[] = [
   },
   {
     id: 'vibrantWarmth',
+    region: 'mainland',
+    colorFamily: 'orange',
     light: {
       primary: '#EA580C',
       secondary: '#F59E0B',
@@ -242,6 +269,8 @@ export const uiColorSchemes: ColorScheme[] = [
   },
   {
     id: 'forestNature',
+    region: 'mainland',
+    colorFamily: 'green',
     light: {
       primary: '#16A34A',
       secondary: '#65A30D',
@@ -265,6 +294,8 @@ export const uiColorSchemes: ColorScheme[] = [
   },
   {
     id: 'purpleDream',
+    region: 'mainland',
+    colorFamily: 'purple',
     light: {
       primary: '#9333EA',
       secondary: '#EC4899',
@@ -289,6 +320,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'sunsetGlow',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'red',
     light: {
       primary: '#E11D48',
       secondary: '#F97316',
@@ -313,6 +346,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'mintFresh',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'cyan',
     light: {
       primary: '#0D9488',
       secondary: '#10B981',
@@ -337,6 +372,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'cyberNeon',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'purple',
     light: {
       primary: '#7C3AED',
       secondary: '#DB2777',
@@ -361,6 +398,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'roseQuartz',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'pink',
     light: {
       primary: '#BE185D',
       secondary: '#DB2777',
@@ -385,6 +424,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'inkLavender',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'purple',
     light: {
       primary: '#4338CA',
       secondary: '#6366F1',
@@ -409,6 +450,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'tropicalCoral',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'red',
     light: {
       primary: '#DC2626',
       secondary: '#F59E0B',
@@ -433,6 +476,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'midnightGold',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'yellow',
     light: {
       primary: '#B45309',
       secondary: '#CA8A04',
@@ -457,6 +502,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'springMatcha',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'green',
     light: {
       primary: '#4D7C0F',
       secondary: '#65A30D',
@@ -481,6 +528,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'auroraBerry',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'purple',
     light: {
       primary: '#6D28D9',
       secondary: '#C026D3',
@@ -505,6 +554,8 @@ export const uiColorSchemes: ColorScheme[] = [
   {
     id: 'glacierIce',
     platform: 'mobile',
+    region: 'mainland',
+    colorFamily: 'cyan',
     light: {
       primary: '#0E7490',
       secondary: '#0891B2',
@@ -527,3 +578,29 @@ export const uiColorSchemes: ColorScheme[] = [
     }
   }
 ]
+
+export const colorFamilyOrder: ColorFamily[] = [
+  'blue',
+  'cyan',
+  'green',
+  'yellow',
+  'orange',
+  'red',
+  'pink',
+  'purple',
+  'brown',
+  'gray'
+]
+
+export const colorFamilySwatch: Record<ColorFamily, string> = {
+  blue: '#1D4ED8',
+  cyan: '#0D9488',
+  green: '#16A34A',
+  yellow: '#CA8A04',
+  orange: '#EA580C',
+  red: '#DC2626',
+  pink: '#BE185D',
+  purple: '#9333EA',
+  brown: '#8B5E3C',
+  gray: '#52525B'
+}

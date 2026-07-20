@@ -28,8 +28,64 @@
         </button>
       </div>
 
+      <div class="filters-bar">
+        <div class="filter-group">
+          <span class="filter-label">{{ t('uiColor.filterRegion') }}</span>
+          <div class="filter-chips" role="group" :aria-label="t('uiColor.filterRegion')">
+            <button
+              class="filter-chip"
+              :class="{ active: regionFilter === 'all' }"
+              @click="regionFilter = 'all'"
+            >
+              {{ t('uiColor.filterAll') }}
+              <span class="chip-count">{{ regionCount('all') }}</span>
+            </button>
+            <button
+              v-for="r in regions"
+              :key="r"
+              class="filter-chip"
+              :class="{ active: regionFilter === r }"
+              @click="regionFilter = r"
+            >
+              {{ t(`uiColor.region${r === 'overseas' ? 'Overseas' : 'Mainland'}`) }}
+              <span class="chip-count">{{ regionCount(r) }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">{{ t('uiColor.filterColor') }}</span>
+          <div class="filter-chips" role="group" :aria-label="t('uiColor.filterColor')">
+            <button
+              class="filter-chip"
+              :class="{ active: colorFilter === 'all' }"
+              @click="colorFilter = 'all'"
+            >
+              {{ t('uiColor.filterAll') }}
+              <span class="chip-count">{{ colorCount('all') }}</span>
+            </button>
+            <button
+              v-for="cf in colorFamilies"
+              :key="cf"
+              class="filter-chip"
+              :class="{ active: colorFilter === cf }"
+              @click="colorFilter = cf"
+            >
+              <span class="chip-dot" :style="{ background: colorFamilySwatch[cf] }"></span>
+              {{ t(`uiColor.colorFamilies.${cf}`) }}
+              <span class="chip-count">{{ colorCount(cf) }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <section class="scheme-section">
-        <div class="schemes-grid" :key="activePlatform">
+        <div v-if="schemes.length === 0" class="empty-state">
+          <Icon :icon="searchXIcon" :width="28" :height="28" />
+          <p>{{ t('uiColor.empty') }}</p>
+          <button class="reset-btn" @click="resetFilters">{{ t('uiColor.resetFilters') }}</button>
+        </div>
+        <div v-else class="schemes-grid" :key="`${activePlatform}-${regionFilter}-${colorFilter}`">
           <article
             v-for="(scheme, index) in schemes"
             :key="`${activePlatform}-${scheme.id}`"
@@ -111,16 +167,21 @@ import arrowLeftIcon from '@iconify-icons/lucide/arrow-left'
 import checkIcon from '@iconify-icons/lucide/check'
 import smartphoneIcon from '@iconify-icons/lucide/smartphone'
 import monitorIcon from '@iconify-icons/lucide/monitor'
+import searchXIcon from '@iconify-icons/lucide/search-x'
 import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import { useTheme } from '../composables/useTheme'
 import {
   uiColorSchemes,
+  colorFamilyOrder,
+  colorFamilySwatch,
   type SchemeRole,
   type GradientPair,
   type SchemeColorSet,
-  type ColorScheme
+  type ColorScheme,
+  type ColorFamily,
+  type SchemeRegion
 } from '../config/uiColorSchemes'
 
 const router = useRouter()
@@ -129,11 +190,34 @@ const { theme } = useTheme()
 
 const platforms: ('mobile' | 'pc')[] = ['mobile', 'pc']
 const activePlatform = ref<'mobile' | 'pc'>('mobile')
+const regions: SchemeRegion[] = ['overseas', 'mainland']
+const colorFamilies = colorFamilyOrder
+const regionFilter = ref<'all' | SchemeRegion>('all')
+const colorFilter = ref<'all' | ColorFamily>('all')
+
+const matchesPlatform = (s: ColorScheme, platform: 'mobile' | 'pc') =>
+  !s.platform || s.platform === 'both' || s.platform === platform
+
+const matchesFilters = (s: ColorScheme) => {
+  const regionOk = regionFilter.value === 'all' || s.region === regionFilter.value
+  const colorOk = colorFilter.value === 'all' || s.colorFamily === colorFilter.value
+  return regionOk && colorOk
+}
+
 const schemes = computed(() =>
-  uiColorSchemes.filter(s => !s.platform || s.platform === 'both' || s.platform === activePlatform.value)
+  uiColorSchemes.filter(s => matchesPlatform(s, activePlatform.value) && matchesFilters(s))
 )
 const schemeCount = (platform: 'mobile' | 'pc') =>
-  uiColorSchemes.filter(s => !s.platform || s.platform === 'both' || s.platform === platform).length
+  uiColorSchemes.filter(s => matchesPlatform(s, platform) && matchesFilters(s)).length
+const regionCount = (region: 'all' | SchemeRegion) =>
+  uiColorSchemes.filter(s => matchesPlatform(s, activePlatform.value) && (region === 'all' || s.region === region)).length
+const colorCount = (family: 'all' | ColorFamily) =>
+  uiColorSchemes.filter(s => matchesPlatform(s, activePlatform.value) && (family === 'all' || s.colorFamily === family)).length
+
+const resetFilters = () => {
+  regionFilter.value = 'all'
+  colorFilter.value = 'all'
+}
 const paletteRoles: SchemeRole[] = ['primary', 'secondary', 'accent', 'background', 'surface']
 const gradientPairs: GradientPair[] = [
   ['primary', 'secondary'],
@@ -350,6 +434,139 @@ const copyColor = (scheme: ColorScheme, role: SchemeRole, key: string) => {
 
 .tab-btn.active .tab-count {
   background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* ============ Filters ============ */
+.filters-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem 1.125rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.filter-label {
+  flex-shrink: 0;
+  width: 4.5rem;
+  padding-top: 0.3125rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s var(--ease-out);
+}
+
+.filter-chip:hover:not(.active) {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.06);
+}
+
+.filter-chip.active {
+  color: #fff;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 1px 3px rgba(var(--color-accent-rgb), 0.3);
+}
+
+.filter-chip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: rgba(var(--color-border-rgb), 0.8);
+  color: var(--color-text-secondary);
+}
+
+.filter-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 3.5rem 1.5rem;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 0.875rem;
+  text-align: center;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.reset-btn {
+  margin-top: 0.25rem;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.08);
+  border: 1px solid var(--color-accent);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.18s var(--ease-out);
+}
+
+.reset-btn:hover {
+  background: var(--color-accent);
   color: #fff;
 }
 
@@ -633,6 +850,20 @@ const copyColor = (scheme: ColorScheme, role: SchemeRole, key: string) => {
   .preview-wrap {
     padding: 1.375rem 1.25rem;
     min-height: 344px;
+  }
+
+  .filters-bar {
+    padding: 0.875rem 0.875rem;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filter-label {
+    width: auto;
+    padding-top: 0;
   }
 }
 
